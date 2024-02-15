@@ -9,6 +9,7 @@ BEGIN
     SELECT i.UserId
     FROM inserted i;
 END;
+GO;
 
 INSERT INTO Users (Email, UserName, UserPassword, PhoneNumber, Bonuses)
 VALUES 
