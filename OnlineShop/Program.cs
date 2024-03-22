@@ -43,14 +43,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-//app.MapGet("/", (ApplicationContext db) => db.Categories.ToList());
-
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (true)
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseExceptionHandler("/Error/HttpStatusCodeHandler");
+    app.UseStatusCodePagesWithRedirects("/Error/HttpStatusCodeHandler?statusCode={0}");
 }
 
 app.UseHttpsRedirection();
@@ -64,5 +61,10 @@ app.UseAuthentication();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+       name: "error",
+       pattern: "/Error/{statusCode}",
+       defaults: new { controller = "Error", action = "HttpStatusCodeHandler" });
 
 app.Run();
