@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OnlineShop.Database;
 using OnlineShop.Models.AccountModels;
 using OnlineShop.Models.DBModels;
 
@@ -12,15 +14,18 @@ namespace OnlineShop.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger _logger;
+        private readonly ApplicationContext _dbContext;
 
         public AccountController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger,
+            ApplicationContext dbContext)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         [HttpGet]
@@ -43,6 +48,10 @@ namespace OnlineShop.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    // Создание записи в ShoppingCart
+                    var shoppingCart = new ShoppingCart { UserId = user.Id };
+                    _dbContext.ShoppingCarts.Add(shoppingCart);
+                    await _dbContext.SaveChangesAsync();
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
