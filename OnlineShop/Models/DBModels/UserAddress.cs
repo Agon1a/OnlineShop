@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OnlineShop.Models
+namespace OnlineShop.Models.DBModels
 {
     public class UserAddress
     {
@@ -9,7 +9,7 @@ namespace OnlineShop.Models
         public Guid AddressId { get; set; }
 
         [ForeignKey("User")]
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
 
         [Display(Name = "Название адреса")]

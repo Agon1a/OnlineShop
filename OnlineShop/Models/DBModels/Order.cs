@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OnlineShop.Models
+namespace OnlineShop.Models.DBModels
 {
     public class Order
     {
@@ -10,7 +10,7 @@ namespace OnlineShop.Models
         public Guid OrderId { get; set; }
 
         [ForeignKey("User")]
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
 
         [Display(Name = "Дата заказа")]
@@ -21,8 +21,6 @@ namespace OnlineShop.Models
         public decimal TotalPrice { get; set; }
 
         public string ProductsJson { get; set; }
-        public List<Product> Products { get; set; }
-
 
         // Добавить метода конвертации [ProductsJson] в экземпляры класса Product и занесения в List Order.Products
     }

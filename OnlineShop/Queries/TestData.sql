@@ -1,28 +1,16 @@
 CREATE TRIGGER trg_CreateShoppingCartOnUserInsert
-ON Users
+ON AspNetUsers
 AFTER INSERT
 AS
 BEGIN
     SET NOCOUNT ON;
 
     INSERT INTO ShoppingCart (UserId)
-    SELECT i.UserId
+    SELECT i.Id
     FROM inserted i;
 END;
-GO;
 
-INSERT INTO Users (Email, UserName, UserPassword, PhoneNumber, Bonuses)
-VALUES 
-('user1@example.com', 'User1', 'password1', '1234567890', 100),
-('user2@example.com', 'User2', 'password2', '2345678901', 50),
-('user3@example.com', 'User3', 'password3', '3456789012', 200),
-('user4@example.com', 'User4', 'password4', '4567890123', 150),
-('user5@example.com', 'User5', 'password5', '5678901234', 75),
-('user6@example.com', 'User6', 'password6', '6789012345', 300),
-('user7@example.com', 'User7', 'password7', '7890123456', 25),
-('user8@example.com', 'User8', 'password8', '8901234567', 50),
-('user9@example.com', 'User9', 'password9', '9012345678', 150),
-('user10@example.com', 'User10', 'password10', '0123456789', 200);
+
 
 INSERT INTO UserAddresses (UserId, AdressName, Street, House, Flat, Entrance, Floor)
 VALUES 
