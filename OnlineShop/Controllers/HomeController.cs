@@ -1,11 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnlineShop.Lib;
 using OnlineShop.Models;
 using System.Diagnostics;
 
 namespace OnlineShop.Controllers
 {
-    [Authorize]
+    [CustomAuthorizationFilter]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -16,11 +16,6 @@ namespace OnlineShop.Controllers
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-        [Authorize]
-        public IActionResult Privacy()
         {
             return View();
         }
