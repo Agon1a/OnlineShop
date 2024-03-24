@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Database;
-using OnlineShop.Lib;
 using OnlineShop.Lib.IO;
+using OnlineShop.Models;
 using OnlineShop.Models.DBModels;
 using System.Security.Claims;
 
@@ -18,16 +18,103 @@ namespace OnlineShop.Controllers
             _shoppingCartService = shoppingCartService;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Получаем товары в корзине для текущего пользователя
+            var productsInCart = _shoppingCartService.GetProductsInCart(userId);
+
+            // Подсчитываем количество каждого товара в корзине
+            var itemCounts = CountItemsInCart(productsInCart);
+
+            // Передаем список товаров и количество каждого товара в ViewData
+            ViewBag.ItemCounts = itemCounts;
+
+            return View();
+        }
+
+        public List<ProductCountViewModel> CountItemsInCart(List<Product> productsInCart)
+        {
+            var itemCounts = new List<ProductCountViewModel>();
+
+            foreach (var product in productsInCart)
+            {
+                var existingItem = itemCounts.FirstOrDefault(i => i.ProductId == product.ProductId);
+
+                if (existingItem != null)
+                {
+                    existingItem.Quantity++;
+                    existingItem.TotalCost = existingItem.Quantity * existingItem.Cost;
+                }
+                else
+                {
+                    itemCounts.Add(new ProductCountViewModel
+                    {
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        Description = product.Description,
+                        Cost = product.Cost,
+                        Quantity = 1,
+                        TotalCost = product.Cost
+                    });
+                }
+            }
+
+            return itemCounts;
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddToCart(Guid productId)
         {
             // Получаем идентификатор пользователя (ваш способ может отличаться)
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            var userData = _context.Users.FirstOrDefault(u => u.Id == userId);
+
             // Добавляем товар в корзину
             await _shoppingCartService.AddToCartAsync(userId, productId);
 
             return View();
         }
+
+        /// <summary>
+        /// Добавление товара внутри корзины
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> AddInCart(Guid productId)
+        {
+            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            var userData = _context.Users.FirstOrDefault(u => u.Id == userId);
+
+            // Добавляем товар в корзину
+            await _shoppingCartService.AddToCartAsync(userId, productId);
+
+            // Перенаправляем пользователя обратно на страницу корзины
+            return RedirectToAction("Index");
+        }
+
+        // Метод для удаления товара из корзины
+        [HttpPost]
+        public IActionResult RemoveFromCart(Guid productId)
+        {
+            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Удаляем товар из корзины
+            _shoppingCartService.RemoveFromCartAsync(userId, productId);
+
+            // Перенаправляем пользователя обратно на страницу корзины
+            return RedirectToAction("Index");
+        }
+
+
     }
 }

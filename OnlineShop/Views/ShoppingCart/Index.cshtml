@@ -1,0 +1,64 @@
+﻿@model List<OnlineShop.Models.DBModels.Product>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container">
+    <h1 style="text-align:center">Корзина</h1>
+    @if (ViewBag.ItemCounts.Count == 0 || ViewBag.ItemCounts == null)
+    {
+        <p>Корзина пуста</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr style="font-weight:bold;">
+                    <th>Название товара</th>
+                    <th>Описание</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Итоговая сумма</th>
+                    <th></th> <!-- Для кнопок "+" и "-" -->
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.ItemCounts)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Description</td>
+                        <td>@item.Cost.ToString("0.00") &#8381;</td>
+                        <!-- Здесь отображаем количество товара -->
+                        <td>@item.Quantity</td>
+                        <td>@item.TotalCost.ToString("0.00") &#8381;</td>
+                        <td>
+                            <!-- Кнопка "+" для увеличения количества товара -->
+                            <form asp-controller="ShoppingCart" asp-action="AddInCart" method="post">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-primary">+</button>
+                            </form>
+                        </td>
+                        <td>
+                            <!-- Кнопка "-" для уменьшения количества товара -->
+                            <form asp-controller="ShoppingCart" asp-action="RemoveFromCart" method="post">
+                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-danger">-</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                <!-- Кнопка для оформления заказа -->
+                <tr>
+                    <td colspan="7" style="text-align: right;">
+                        <form asp-controller="Order" asp-action="Checkout" method="post">
+                            <button type="submit" class="btn btn-success">Оформить заказ</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</div>
