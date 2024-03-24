@@ -42,13 +42,24 @@ namespace OnlineShop.Lib
             else
             {
                 // В противном случае, десериализуем JSON строку
-                productList = JsonConvert.DeserializeObject<List<Product>>(shoppingCart.ProductsJson);
+                productList = await GetProductsInCart(userId);
             }
 
             productList.Add(currentProduct);
             shoppingCart.ProductsJson = JsonConvert.SerializeObject(productList);
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Product>?> GetProductsInCart(string userId)
+        {
+            // Находим запись корзины для указанного пользователя
+            var shoppingCart = await _context.ShoppingCarts
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            List<Product> productList = JsonConvert.DeserializeObject<List<Product>>(shoppingCart.ProductsJson);
+
+            return productList;
         }
 
         public async Task RemoveFromCartAsync(string userId, Guid productId)
@@ -60,10 +71,11 @@ namespace OnlineShop.Lib
             if (shoppingCart != null)
             {
                 // Извлекаем список товаров из JSON-строки
-                var productList = JsonConvert.DeserializeObject<List<Guid>>(shoppingCart.ProductsJson);
+                var productList = await GetProductsInCart(userId);
 
                 // Удаляем товар из списка
-                productList.Remove(productId);
+                Product currentProduct = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
+                productList.Remove(currentProduct);
 
                 // Обновляем JSON-строку
                 shoppingCart.ProductsJson = JsonConvert.SerializeObject(productList);
