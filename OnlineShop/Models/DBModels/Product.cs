@@ -5,6 +5,7 @@ namespace OnlineShop.Models.DBModels
 {
     public class Product
     {
+
         [Key]
         public Guid ProductId { get; set; }
 
@@ -19,12 +20,20 @@ namespace OnlineShop.Models.DBModels
         [Display(Name = "Цена")]
         [Column(TypeName = "money")]
         public decimal Cost { get; set; }
-
-        [Column(TypeName = "varbinary(MAX)")]
-        public byte[] Image { get; set; }
+        public string ImageUrl { get; set; }
 
         [ForeignKey("Category")]
         public Guid CategoryId { get; set; }
         public Category Category { get; set; }
+
+        public Product(string productName, string? description, decimal cost, string imageUrl, Guid categoryId)
+        {
+            ProductId = new Guid();
+            ProductName = productName;
+            Description = description;
+            Cost = cost;
+            ImageUrl = imageUrl;
+            CategoryId = categoryId;
+        }
     }
 }

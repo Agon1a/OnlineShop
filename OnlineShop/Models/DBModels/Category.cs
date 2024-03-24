@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnlineShop.Models.DBModels
 {
@@ -13,5 +14,14 @@ namespace OnlineShop.Models.DBModels
         [MinLength(3)]
         [MaxLength(50)]
         public string CategoryName { get; set; }
+        public string ImageUrl { get; set; }
+
+
+        public Category(Guid categoryId, string categoryName, string imageUrl)
+        {
+            CategoryId = categoryId;
+            CategoryName = categoryName;
+            ImageUrl = imageUrl;
+        }
     }
 }

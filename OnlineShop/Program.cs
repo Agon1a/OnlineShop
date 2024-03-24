@@ -50,6 +50,8 @@ if (true)
     app.UseStatusCodePagesWithRedirects("/Error/HttpStatusCodeHandler?statusCode={0}");
 }
 
+await Seed.TestData(app);
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
