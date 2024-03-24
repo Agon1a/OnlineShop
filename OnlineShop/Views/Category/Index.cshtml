@@ -1,0 +1,63 @@
+@using OnlineShop.Models.DBModels
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Category: " + ViewBag.CategoryName;
+}
+
+<h1 style="text-align:center">Категория: @ViewBag.CategoryName</h1>
+
+<style>
+    a p {
+        color:white;
+        text-decoration: none;
+    }
+    a:hover p {
+        color: yellow;
+    }
+</style>
+<section>
+    <div class="album py-5">
+        <div class="container">
+            <div class="row">
+                @foreach (var product in Model)
+                {
+                    <div class="col" style="min-width: 400px; min-height: 500px; max-width: 400px; max-height: 500px;">
+                        
+                            <div class="card mb-4 box-shadow bg-dark">
+                                <img class="card-img-top poster" src="@product.ImageUrl.ToString()"
+                                    alt="@product.ProductName" style="height: 300px;">
+                                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                <a href="@Url.Action("Index", "Product", new { ProductId = product.ProductId })"
+                                   style="text-decoration: none;">
+                                    <p class="card-text" style="font-weight:bold;">@product.ProductName</p>
+                                </a>
+                                    <p class="card-text text-white" style="font-weight:bold;">@product.Cost.ToString("0.00")
+                                        &#8381;</p>
+                                    <button class="btn btn-danger rounded-pill"
+                                            onclick="orderProduct('@product.ProductId')" font-weight:bold;>
+                                        Заказать
+                                    </button>
+                                </div>
+                            </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <script>
+        function orderProduct(productId) {
+            $.ajax({
+                type: 'POST',
+                url: '/ShoppingCart/Update',
+                data: { productId: productId },
+                success: function (data) {
+                    // ��������� ��������� ������, ���� ����������
+                },
+                error: function (error) {
+                    // ��������� ������, ���� ����������
+                }
+            });
+        }
+    </script>
+</section>

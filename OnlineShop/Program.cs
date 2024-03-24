@@ -69,4 +69,9 @@ app.MapControllerRoute(
        pattern: "/Error/{statusCode}",
        defaults: new { controller = "Error", action = "HttpStatusCodeHandler" });
 
+app.MapControllerRoute(
+        name: "category",
+        pattern: "Category/{CategoryId}",
+        defaults: new { controller = "Category", action = "Index" }
+    );
 app.Run();
