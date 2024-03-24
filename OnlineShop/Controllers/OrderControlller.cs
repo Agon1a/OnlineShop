@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using OnlineShop.Database;
+using OnlineShop.Lib;
 using OnlineShop.Lib.IO;
 using OnlineShop.Models.DBModels;
 using System.Security.Claims;
 
 namespace OnlineShop.Controllers
 {
+    [CustomAuthorizationFilter]
     public class OrderController : Controller
     {
         private readonly IShoppingCartService _shoppingCartService;
@@ -20,6 +22,33 @@ namespace OnlineShop.Controllers
 
         public IActionResult Checkout()
         {
+            // Получение значений из объекта Request.Form
+            var fullName = Request.Form["fullName"];
+            var phoneNumber = Request.Form["phoneNumber"];
+            var addressName = Request.Form["addressName"];
+            var paymentMethod = Request.Form["paymentMethod"];
+
+            // Проверка на пустые значения параметров
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                ModelState.AddModelError("fullName", "Пожалуйста, введите ФИО.");
+            }
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                ModelState.AddModelError("phoneNumber", "Пожалуйста, введите номер телефона.");
+            }
+            if (string.IsNullOrWhiteSpace(addressName))
+            {
+                ModelState.AddModelError("addressName", "Пожалуйста, выберите адрес.");
+            }
+
+            // Проверка на наличие ошибок в модели
+            if (!ModelState.IsValid)
+            {
+                // Если есть ошибки, возвращаем представление с сообщением об ошибке
+                return View("Error");
+            }
+
             // Получаем идентификатор пользователя
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userData = _context.Users.Where(u => u.Id == userId).FirstOrDefault();
@@ -81,7 +110,7 @@ namespace OnlineShop.Controllers
             var userAddresses = _context.UserAddresses.ToList();
 
             // Создаем новый список, содержащий только AddressName
-            var addressNames = userAddresses.Select(address => address.AddressName).ToList();
+            var addressNames = userAddresses.Where(address => address.UserId == userId).Select(address => address.AddressName).ToList();
 
             // Передаем данные UserAddresses в представление через ViewBag
             ViewBag.UserAddresses = addressNames;

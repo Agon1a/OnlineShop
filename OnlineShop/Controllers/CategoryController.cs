@@ -5,6 +5,7 @@ using OnlineShop.Lib.IO;
 
 namespace OnlineShop.Controllers
 {
+    [CustomAuthorizationFilter]
     public class CategoryController : Controller
     {
         ICategoryService _categoryService;

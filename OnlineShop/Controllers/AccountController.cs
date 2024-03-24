@@ -102,6 +102,7 @@ namespace OnlineShop.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorizationFilter]
         public async Task<IActionResult> SaveProfile(string Fullname, string Email, string PhoneNumber)
         {
             if (ModelState.IsValid)
@@ -123,6 +124,8 @@ namespace OnlineShop.Controllers
 
             return RedirectToAction("UserDashboard");
         }
+
+        [CustomAuthorizationFilter]
         public IActionResult Addresses()
         {
             // Получаем идентификатор пользователя
@@ -133,6 +136,7 @@ namespace OnlineShop.Controllers
             return View(userAddresses);
         }
 
+        [CustomAuthorizationFilter]
         public IActionResult Orders()
         {
             // Получаем идентификатор пользователя
@@ -186,6 +190,7 @@ namespace OnlineShop.Controllers
             return RedirectToAction("Addresses");
         }
 
+        [CustomAuthorizationFilter]
         public async Task<IActionResult> UserDashboard()
         {
             var user = await _userManager.GetUserAsync(User);

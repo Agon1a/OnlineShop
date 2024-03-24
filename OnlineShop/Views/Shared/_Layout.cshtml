@@ -50,14 +50,16 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
                     </li>
                 </ul>
-                
-                <div class="container">
-                    <form class="d-flex justify-content-center" method="get" action="@Url.Action("Search", "Product")">
-                        <input class="form-control me-2" type="search" name="productName" placeholder="Поиск по названию товара"
-                               aria-label="Search">
-                        <button class="btn btn-outline-primary" type="submit">Поиск</button>
-                    </form>
-                </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="container">
+                        <form class="d-flex justify-content-center" method="get" action="@Url.Action("Search", "Product")">
+                            <input class="form-control me-2" type="search" name="productName" placeholder="Поиск по названию товара"
+                                   aria-label="Search">
+                            <button class="btn btn-outline-primary" type="submit">Поиск</button>
+                        </form>
+                    </div>
+                }
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     
                     <ul class="navbar-nav flex-grow-1 justify-content-end">

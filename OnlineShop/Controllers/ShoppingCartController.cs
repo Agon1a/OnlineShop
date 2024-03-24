@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Database;
+using OnlineShop.Lib;
 using OnlineShop.Lib.IO;
 using System.Security.Claims;
 
 namespace OnlineShop.Controllers
 {
+    [CustomAuthorizationFilter]
     public class ShoppingCartController : Controller
     {
         private readonly IShoppingCartService _shoppingCartService;

@@ -5,6 +5,7 @@ using OnlineShop.Lib.IO;
 
 namespace OnlineShop.Controllers
 {
+    [CustomAuthorizationFilter]
     public class ProductController : Controller
     {
         IProductService _productService;
@@ -15,6 +16,7 @@ namespace OnlineShop.Controllers
             _context = context;
         }
 
+        [CustomAuthorizationFilter]
         public IActionResult Index(Guid productId)
         {
             _productService = new ProductService(_context);

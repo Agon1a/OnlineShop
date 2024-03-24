@@ -50,7 +50,7 @@
         <!-- Выпадающий список с данными из UserAddresses -->
         <div class="form-group" style="margin-top: 10px">
             <label for="address" style="font-weight:bold;">Выберите адрес:</label>
-            <select class="form-control" id="address" name="address">
+            <select class="form-control" id="address" name="addressName">
                 @foreach (var addressName in ViewBag.UserAddresses)
                 {
                     <option value="@addressName">@addressName</option>
@@ -75,6 +75,4 @@
         <!-- Кнопка "Подтвердить заказ" -->
         <button type="submit" class="btn btn-success" style="margin-top: 10px">Подтвердить заказ</button>
     </form>
-
-
 </div>
