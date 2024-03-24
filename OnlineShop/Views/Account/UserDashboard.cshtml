@@ -1,3 +1,4 @@
+@using OnlineShop.Models.DBModels
 @{
     ViewData["Title"] = "Панель пользователя";
 }
@@ -16,13 +17,13 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane fade show active" id="index">
-            @Html.Partial("Index")
+            @Html.Partial("Index", (User)Model.User)
         </div>
         <div class="tab-pane fade" id="addresses">
-            @Html.Partial("Addresses")
+            @Html.Partial("Addresses", (List<UserAddress>)Model.UserAddresses)
         </div>
         <div class="tab-pane fade" id="orders">
-            @Html.Partial("Orders")
+            @Html.Partial("Orders", (List<Order>)Model.Orders)
         </div>
     </div>
 </div>

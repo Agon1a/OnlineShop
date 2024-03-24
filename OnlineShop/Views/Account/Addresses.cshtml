@@ -1,4 +1,5 @@
-@model List<OnlineShop.Models.DBModels.UserAddress>
+@using OnlineShop.Models.DBModels
+@model List<UserAddress>
 @{
     ViewData["Title"] = "Мои адреса";
 }
@@ -14,17 +15,11 @@
             </tr>
         </thead>
         <tbody>
+
             @foreach (var address in Model)
             {
                 <tr>
                     <td>@address.AddressName</td>
-                    <td>
-                        <!-- Кнопка "Изменить" для редактирования адреса -->
-                        <form asp-controller="Account" asp-action="AddAddress" method="post">
-                            <input type="hidden" name="addressId" value="@address.AddressId" />
-                            <button type="submit" class="btn btn-primary">Изменить</button>
-                        </form>
-                    </td>
                     <td>
                         <!-- Кнопка "Удалить" для удаления адреса -->
                         <form asp-controller="Account" asp-action="DeleteAddress" method="post">
@@ -34,13 +29,13 @@
                     </td>
                 </tr>
             }
-            <tr>
+            @* <tr>
                 <!-- Кнопка "Добавить" для добавления адреса -->
                 <form asp-controller="Account" asp-action="AddAddress" method="post">
                     <input type="hidden" name="addressId" value="@address.AddressId" />
                     <button type="submit" class="btn btn-primary">Изменить</button>
                 </form>
-            </tr>
+            </tr> *@
         </tbody>
     </table>
 </div>

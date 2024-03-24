@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OnlineShop.Database;
 using OnlineShop.Lib;
 using OnlineShop.Lib.IO;
+using OnlineShop.Models;
 using OnlineShop.Models.AccountModels;
 using OnlineShop.Models.DBModels;
 using System.Security.Claims;
@@ -100,6 +101,7 @@ namespace OnlineShop.Controllers
             {
                 return NotFound();
             }
+
             return View(user);
         }
 
@@ -125,8 +127,11 @@ namespace OnlineShop.Controllers
 
             return RedirectToAction("Index");
         }
-        public IActionResult Addresses(string userId)
+        public IActionResult Addresses()
         {
+            // Получаем идентификатор пользователя
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             var userAddresses = _context.UserAddresses.Where(p => p.UserId == userId).ToList();
 
             return View(userAddresses);
@@ -134,8 +139,12 @@ namespace OnlineShop.Controllers
 
         public IActionResult Orders()
         {
-            // Здесь может быть логика для получения заказов пользователя из базы данных
-            return View();
+            // Получаем идентификатор пользователя
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var orders = _context.Orders.Where(o => o.UserId == userId).ToList();
+
+            return View(orders);
         }
 
         [HttpPost]
@@ -149,7 +158,7 @@ namespace OnlineShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteAddressAsync(Guid addressId)
+        public async Task<IActionResult> DeleteAddress(Guid addressId)
         {
             // Получаем идентификатор пользователя (ваш способ может отличаться)
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -165,11 +174,18 @@ namespace OnlineShop.Controllers
         // GET: /User/Dashboard
         public async Task<IActionResult> UserDashboard()
         {
-            // Здесь можно добавить логику для получения информации о пользователе
-            // и передать ее в представление UserDashboard.cshtml
             var user = await _userManager.GetUserAsync(User);
+            var userAddresses = _context.UserAddresses.Where(a => a.UserId == user.Id).ToList();
+            var orders = _context.Orders.Where(o => o.UserId == user.Id).ToList();
 
-            return View(user);
+            var model = new UserDashboardViewModel
+            {
+                User = user,
+                UserAddresses = userAddresses,
+                Orders = orders,
+            };
+
+            return View(model);
         }
 
         [HttpPost]
