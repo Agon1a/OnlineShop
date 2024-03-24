@@ -1,0 +1,45 @@
+@model Guid
+
+<button type="button" class="btn btn-danger rounded-pill" onclick="orderProduct('@Model')">Заказать</button>
+
+<style>
+    /* Стили для уведомления */
+    #notification {
+        display: none;
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 9999;
+    }
+</style>
+<!-- Контейнер для уведомления об успешном добавлении товара в корзину -->
+<div id="notification">Товар успешно добавлен в корзину!</div>
+
+<script>
+    function orderProduct(productId) {
+        // Отправляем AJAX запрос на добавление товара в корзину
+        $.ajax({
+            type: 'POST',
+            url: '/ShoppingCart/AddToCart',
+            data: { productId: productId },
+            success: function (data) {
+                // Показываем уведомление об успешном добавлении
+                showNotification();
+            },
+            error: function (error) {
+                // Обработка ошибки при добавлении товара в корзину
+                alert('Произошла ошибка при добавлении товара в корзину!');
+            }
+        });
+    }
+
+    function showNotification() {
+        // Показываем уведомление
+        $('#notification').fadeIn().delay(3000).fadeOut();
+    }
+</script>
