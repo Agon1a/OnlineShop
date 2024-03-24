@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Панель пользователя";
+}
+
+<div class="container">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#index">Профиль</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#addresses">Мои адреса</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#orders">Заказы</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="index">
+            @Html.Partial("Index")
+        </div>
+        <div class="tab-pane fade" id="addresses">
+            @Html.Partial("Addresses")
+        </div>
+        <div class="tab-pane fade" id="orders">
+            @Html.Partial("Orders")
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.nav-tabs a').click(function () {
+                $(this).tab('show');
+            });
+        });
+    </script>
+}

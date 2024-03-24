@@ -20,7 +20,7 @@ namespace OnlineShop.Controllers
 
         public async Task<IActionResult> Index()
         {
-            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            // Получаем идентификатор пользователя
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             // Получаем товары в корзине для текущего пользователя
@@ -88,10 +88,9 @@ namespace OnlineShop.Controllers
         [HttpPost]
         public async Task<IActionResult> AddInCart(Guid productId)
         {
-            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            // Получаем идентификатор пользователя
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Получаем идентификатор пользователя (ваш способ может отличаться)
             var userData = _context.Users.FirstOrDefault(u => u.Id == userId);
 
             // Добавляем товар в корзину
@@ -105,7 +104,7 @@ namespace OnlineShop.Controllers
         [HttpPost]
         public IActionResult RemoveFromCart(Guid productId)
         {
-            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            // Получаем идентификатор пользователя
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             // Удаляем товар из корзины

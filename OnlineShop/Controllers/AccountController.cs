@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineShop.Database;
 using OnlineShop.Lib;
+using OnlineShop.Lib.IO;
 using OnlineShop.Models.AccountModels;
 using OnlineShop.Models.DBModels;
+using System.Security.Claims;
 using static OnlineShop.Models.AccountModels.UserProfileViewModel;
 
 namespace OnlineShop.Controllers
@@ -16,7 +18,7 @@ namespace OnlineShop.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger _logger;
-        private readonly ApplicationContext _dbContext;
+        private readonly ApplicationContext _context;
 
         public AccountController(
             UserManager<User> userManager,
@@ -27,7 +29,7 @@ namespace OnlineShop.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _dbContext = dbContext;
+            _context = dbContext;
         }
 
         [HttpGet]
@@ -52,8 +54,8 @@ namespace OnlineShop.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     // Создание записи в ShoppingCart
                     var shoppingCart = new ShoppingCart { UserId = user.Id };
-                    _dbContext.ShoppingCarts.Add(shoppingCart);
-                    await _dbContext.SaveChangesAsync();
+                    _context.ShoppingCarts.Add(shoppingCart);
+                    await _context.SaveChangesAsync();
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -91,64 +93,83 @@ namespace OnlineShop.Controllers
 
         [HttpGet]
         [CustomAuthorizationFilter]
-        public async Task<IActionResult> Profile()
+        public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return NotFound();
             }
-
-            var model = new UserProfileModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber
-                // Добавьте другие свойства, которые вы хотите отобразить
-            };
-
-            return View(model);
+            return View(user);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(string id)
-        {
-            User user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, Email = user.Email };
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(EditUserViewModel model)
+        public async Task<IActionResult> SaveProfile(string Fullname, string Email, string PhoneNumber)
         {
             if (ModelState.IsValid)
             {
-                User user = await _userManager.FindByIdAsync(model.Id);
-                if (user != null)
+                var currentUser = await _userManager.GetUserAsync(User);
+                var existingUser = await _context.Users.FindAsync(currentUser.Id);
+                if (existingUser == null)
                 {
-                    user.Email = model.Email;
-                    user.UserName = model.Email;
-
-                    var result = await _userManager.UpdateAsync(user);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                        foreach (var error in result.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                        }
-                    }
+                    return NotFound();
                 }
+
+                existingUser.Fullname = Fullname;
+                existingUser.Email = Email;
+                existingUser.PhoneNumber = PhoneNumber;
+
+                _context.Users.Update(existingUser);
+                await _context.SaveChangesAsync();
             }
-            return View(model);
+
+            return RedirectToAction("Index");
+        }
+        public IActionResult Addresses(string userId)
+        {
+            var userAddresses = _context.UserAddresses.Where(p => p.UserId == userId).ToList();
+
+            return View(userAddresses);
+        }
+
+        public IActionResult Orders()
+        {
+            // Здесь может быть логика для получения заказов пользователя из базы данных
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddAddress(Guid addressId)
+        {
+            // Ваш код для редактирования адреса по его идентификатору
+            // Например, можно использовать методы EF Core для обновления записи в базе данных
+            // После выполнения операции редактирования перенаправьте пользователя на страницу с адресами
+
+            return RedirectToAction("Addresses");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAddressAsync(Guid addressId)
+        {
+            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Удаляем товар из корзины
+            var userAddress = await _context.UserAddresses.FindAsync(addressId);
+            _context.UserAddresses.Remove(userAddress);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Addresses");
+        }
+
+        // GET: /User/Dashboard
+        public async Task<IActionResult> UserDashboard()
+        {
+            // Здесь можно добавить логику для получения информации о пользователе
+            // и передать ее в представление UserDashboard.cshtml
+            var user = await _userManager.GetUserAsync(User);
+
+            return View(user);
         }
 
         [HttpPost]

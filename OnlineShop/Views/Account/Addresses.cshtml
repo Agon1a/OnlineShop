@@ -1,0 +1,46 @@
+@model List<OnlineShop.Models.DBModels.UserAddress>
+@{
+    ViewData["Title"] = "Мои адреса";
+}
+
+<div class="container">
+    <h1>Мои адреса</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Название Адреса</th>
+                <th></th> <!--Изменить-->
+                <th></th> <!--Удалить-->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var address in Model)
+            {
+                <tr>
+                    <td>@address.AddressName</td>
+                    <td>
+                        <!-- Кнопка "Изменить" для редактирования адреса -->
+                        <form asp-controller="Account" asp-action="AddAddress" method="post">
+                            <input type="hidden" name="addressId" value="@address.AddressId" />
+                            <button type="submit" class="btn btn-primary">Изменить</button>
+                        </form>
+                    </td>
+                    <td>
+                        <!-- Кнопка "Удалить" для удаления адреса -->
+                        <form asp-controller="Account" asp-action="DeleteAddress" method="post">
+                            <input type="hidden" name="addressId" value="@address.AddressId" />
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <!-- Кнопка "Добавить" для добавления адреса -->
+                <form asp-controller="Account" asp-action="AddAddress" method="post">
+                    <input type="hidden" name="addressId" value="@address.AddressId" />
+                    <button type="submit" class="btn btn-primary">Изменить</button>
+                </form>
+            </tr>
+        </tbody>
+    </table>
+</div>

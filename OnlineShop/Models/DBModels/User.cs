@@ -10,7 +10,7 @@ namespace OnlineShop.Models.DBModels
         public int Bonuses { get; set; }
 
         [Display(Name = "ФИО")]
-        public string? NormalizeUserName { get; set; }
+        public string? Fullname { get; set; }
 
     }
 }
