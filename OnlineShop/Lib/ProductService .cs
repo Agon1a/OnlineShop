@@ -18,5 +18,7 @@ namespace OnlineShop.Lib
             // Поиск товара по его идентификатору в базе данных
             return _context.Products.FirstOrDefault(p => p.ProductId == productId);
         }
+
+        
     }
 }

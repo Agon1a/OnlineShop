@@ -1,0 +1,93 @@
+@using OnlineShop.Models.DBModels
+@model List<UserAddress>
+@{
+    ViewData["Title"] = "Мои адреса";
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<div class="container">
+    <h1>Мои адреса</h1>
+    <table class="table">
+        @if (Model.Count == 0 || Model == null)
+        {
+            <p>У вас нет активных адресов</p>
+        }
+        else
+        {
+            <thead>
+                <tr>
+                    <th>Название Адреса</th>
+                    <th></th> <!--Изменить-->
+                    <th></th> <!--Удалить-->
+                </tr>
+            </thead>
+            <tbody>
+
+
+                @foreach (var address in Model)
+                {
+                    <tr>
+                        <td>@address.AddressName</td>
+                        <td>
+                            <!-- Кнопка "Удалить" для удаления адреса -->
+                            <form asp-controller="Account" asp-action="DeleteAddress" method="post">
+                                <input type="hidden" name="addressId" value="@address.AddressId" />
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        }
+
+    </table>
+    <!-- Кнопка "Добавить адрес" -->
+    <button class="btn btn-primary" id="addAddressBtn">Добавить адрес</button>
+
+    <!-- Форма добавления адреса -->
+    <div id="addAddressForm" style="display: none;">
+        <form asp-controller="Account" asp-action="AddAddress" method="post">
+            <div class="form-group">
+                <label for="addressName">Название адреса:</label>
+                <input type="text" class="form-control" id="addressName" name="AddressName">
+            </div>
+            <div class="form-group">
+                <label for="street">Улица:</label>
+                <input type="text" class="form-control" id="street" name="Street">
+            </div>
+            <div class="form-group">
+                <label for="house">Дом:</label>
+                <input type="text" class="form-control" id="house" name="House">
+            </div>
+            <div class="form-group">
+                <label for="flat">Квартира:</label>
+                <input type="text" class="form-control" id="flat" name="Flat">
+            </div>
+            <div class="form-group">
+                <label for="entrance">Подъезд:</label>
+                <input type="text" class="form-control" id="entrance" name="Entrance">
+            </div>
+            <div class="form-group">
+                <label for="floor">Этаж:</label>
+                <input type="text" class="form-control" id="floor" name="Floor">
+            </div>
+            <button type="submit" class="btn btn-success" style="margin-top: 10px">Добавить</button>
+        </form>
+    </div>
+
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+<script>
+    $(document).ready(function () {
+        // Показать форму добавления адреса при нажатии кнопки
+        $('#addAddressBtn').click(function () {
+            $('#addAddressForm').toggle();
+
+            // Добавляем класс 'show' для кнопки "Добавить адрес", чтобы раскрыть меню
+            $(this).toggleClass('show');
+        });
+    });
+</script>

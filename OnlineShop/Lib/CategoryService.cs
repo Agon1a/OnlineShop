@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OnlineShop.Database;
+﻿using OnlineShop.Database;
 using OnlineShop.Lib.IO;
 using OnlineShop.Models.DBModels;
 

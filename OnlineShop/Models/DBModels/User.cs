@@ -8,5 +8,9 @@ namespace OnlineShop.Models.DBModels
 
         [Display(Name = "Бонусы")]
         public int Bonuses { get; set; }
+
+        [Display(Name = "ФИО")]
+        public string? Fullname { get; set; }
+
     }
 }

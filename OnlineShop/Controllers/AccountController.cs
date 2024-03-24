@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShop.Database;
+using OnlineShop.Lib;
 using OnlineShop.Models.AccountModels;
 using OnlineShop.Models.DBModels;
+using System.Security.Claims;
 
 namespace OnlineShop.Controllers
 {
@@ -13,7 +15,7 @@ namespace OnlineShop.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly ILogger _logger;
-        private readonly ApplicationContext _dbContext;
+        private readonly ApplicationContext _context;
 
         public AccountController(
             UserManager<User> userManager,
@@ -24,7 +26,7 @@ namespace OnlineShop.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _dbContext = dbContext;
+            _context = dbContext;
         }
 
         [HttpGet]
@@ -49,8 +51,8 @@ namespace OnlineShop.Controllers
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     // Создание записи в ShoppingCart
                     var shoppingCart = new ShoppingCart { UserId = user.Id };
-                    _dbContext.ShoppingCarts.Add(shoppingCart);
-                    await _dbContext.SaveChangesAsync();
+                    _context.ShoppingCarts.Add(shoppingCart);
+                    await _context.SaveChangesAsync();
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -84,6 +86,117 @@ namespace OnlineShop.Controllers
                 ModelState.AddModelError("", "Неверная попытка входа.");
             }
             return View(model);
+        }
+
+        [HttpGet]
+        [CustomAuthorizationFilter]
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveProfile(string Fullname, string Email, string PhoneNumber)
+        {
+            if (ModelState.IsValid)
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                var existingUser = await _context.Users.FindAsync(currentUser.Id);
+                if (existingUser == null)
+                {
+                    return NotFound();
+                }
+
+                existingUser.Fullname = Fullname;
+                existingUser.Email = Email;
+                existingUser.PhoneNumber = PhoneNumber;
+
+                _context.Users.Update(existingUser);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("UserDashboard");
+        }
+        public IActionResult Addresses()
+        {
+            // Получаем идентификатор пользователя
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var userAddresses = _context.UserAddresses.Where(p => p.UserId == userId).ToList();
+
+            return View(userAddresses);
+        }
+
+        public IActionResult Orders()
+        {
+            // Получаем идентификатор пользователя
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var orders = _context.Orders.Where(o => o.UserId == userId).ToList();
+
+            return View(orders);
+        }
+
+        [HttpPost]
+        public IActionResult AddAddress(string addressName, string street, string? house, string? flat, string? entrance, string? floor)
+        {
+            if (ModelState.IsValid)
+            {
+                // Получаем идентификатор пользователя
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                
+                var newAddress = new UserAddress
+                {
+                    AddressName = addressName,
+                    UserId = userId,
+                    Street = street,
+                    House = house,
+                    Flat = flat,
+                    Entrance = entrance,
+                    Floor = floor
+                };
+
+                // Добавление адреса в контекст базы данных
+                _context.UserAddresses.Add(newAddress);
+                _context.SaveChanges();
+
+                return RedirectToAction("UserDashboard"); 
+            }
+
+            return RedirectToAction("UserDashboard");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAddress(Guid addressId)
+        {
+            // Получаем идентификатор пользователя (ваш способ может отличаться)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Удаляем товар из корзины
+            var userAddress = await _context.UserAddresses.FindAsync(addressId);
+            _context.UserAddresses.Remove(userAddress);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Addresses");
+        }
+
+        public async Task<IActionResult> UserDashboard()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var userAddresses = _context.UserAddresses.Where(a => a.UserId == user.Id).ToList();
+            var orders = _context.Orders.Where(o => o.UserId == user.Id).ToList();
+
+            ViewData["User"] = user;
+            ViewData["UserAddresses"] = userAddresses;
+            ViewData["Orders"] = orders;
+
+            return View();
         }
 
         [HttpPost]

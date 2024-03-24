@@ -30,5 +30,15 @@ namespace OnlineShop.Controllers
             // Если товар найден, передаем его в представление
             return View(product);
         }
+
+        // GET: /Product/Search
+        public IActionResult Search(string productName)
+        {
+            // Получаем товары, соответствующие критерию поиска
+            var products = _context.Products.Where(p => p.ProductName.Contains(productName)).ToList();
+
+            // Передаем найденные товары в представление для отображения
+            return View(products);
+        }
     }
 }

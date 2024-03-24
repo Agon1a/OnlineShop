@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OnlineShop.Database;
 using OnlineShop.Lib;
 using OnlineShop.Models;

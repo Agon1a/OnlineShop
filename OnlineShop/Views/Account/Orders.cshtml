@@ -1,0 +1,35 @@
+@using OnlineShop.Models.DBModels
+@model List<Order>
+
+@{
+    ViewData["Title"] = "Заказы";
+}
+
+<div class="container">
+    <h1>Заказы</h1>
+    <table class="table">
+        @if (Model.Count == 0 || Model == null)
+        {
+            <p>История заказов отсутствует</p>
+        }
+        else
+        {
+            <thead>
+                <th>ID заказа</th>
+                <th>Дата заказа</th>
+                <th>Сумма заказа</th>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.OrderId</td>
+                        <td>@item.OrderDate</td>
+                        <td>@item.TotalPrice.ToString("0.00") &#8381;</td>
+                    </tr>
+                }
+            </tbody>
+        }
+    </table>
+
+</div>

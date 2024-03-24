@@ -1,0 +1,44 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using OnlineShop.Models.DBModels
+@model List<Product>
+
+
+
+<h1 style="text-align:center">Результаты поиска</h1>
+
+<style>
+    a p {
+        color: white;
+        text-decoration: none;
+    }
+
+    a:hover p {
+        color: yellow;
+    }
+
+</style>
+
+
+<section>
+    <div class="album py-5">
+        <div class="container">
+            <div class="row">
+                @foreach (var product in Model)
+                {
+                    <div class="col" style="min-width: 400px; min-height: 500px; max-width: 400px; max-height: 500px;">
+                        <div class="card mb-4 box-shadow bg-dark">
+                            <img class="card-img-top poster" src="@product.ImageUrl.ToString()" alt="@product.ProductName" style="height: 300px;">
+                            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                                <a href="@Url.Action("Index", "Product", new { ProductId = product.ProductId })" style="text-decoration: none;">
+                                    <p class="card-text" style="font-weight:bold;">@product.ProductName</p>
+                                </a>
+                                <p class="card-text text-white" style="font-weight:bold;">@product.Cost.ToString("0.00") &#8381;</p>
+                                <partial name="OrderButton" model="product.ProductId" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

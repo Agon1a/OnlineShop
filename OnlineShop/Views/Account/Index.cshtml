@@ -1,0 +1,31 @@
+﻿@using OnlineShop.Models.DBModels
+@model User
+
+@{
+    ViewData["Title"] = "Профиль";
+}
+
+<div class="container">
+    <form method="post" action="@Url.Action("SaveProfile", "Account")">
+        <div>
+            <h4>ФИО</h4>
+            <input type="text" class="form-control rounded" name="fullname"
+                value="@(!string.IsNullOrEmpty(Model.Fullname) ? Model.Fullname : null)" />
+        </div>
+        <div>
+            <h4>E-mail</h4>
+            <input type="text" class="form-control rounded" name="email"
+                value="@(!string.IsNullOrEmpty(Model.Email) ? Model.Email : null)" />
+        </div>
+        <div>
+            <h4>Телефон</h4>
+            <input type="text" class="form-control rounded" name="phoneNumber"
+                value="@(!string.IsNullOrEmpty(Model.PhoneNumber) ? Model.PhoneNumber : null)" />
+        </div>
+        <div>
+            <h4>Бонусы</h4>
+            <p>@Model.Bonuses</p>
+        </div>
+        <button type="submit" class="btn btn-success mt-3">Сохранить</button>
+    </form>
+</div>

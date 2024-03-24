@@ -20,6 +20,8 @@ namespace OnlineShop.Database
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>().Property(u => u.Bonuses).HasDefaultValue(0);
+            modelBuilder.Entity<User>().Property(u => u.PhoneNumber).HasDefaultValue("");
+            modelBuilder.Entity<User>().Property(u => u.Fullname).HasDefaultValue("");
             modelBuilder.Entity<UserAddress>().Property(ua => ua.AddressId).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<ShoppingCart>().Property(s => s.ProductsJson).HasDefaultValue("{[]}");
             modelBuilder.Entity<ShoppingCart>().Property(s => s.CartId).HasDefaultValueSql("NEWID()");
