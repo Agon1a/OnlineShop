@@ -42,7 +42,7 @@ namespace OnlineShop.Lib
             else
             {
                 // В противном случае, десериализуем JSON строку
-                productList = await GetProductsInCart(userId);
+                productList = GetProductsInCart(userId);
             }
 
             productList.Add(currentProduct);
@@ -51,38 +51,48 @@ namespace OnlineShop.Lib
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Product>?> GetProductsInCart(string userId)
+        public List<Product> GetProductsInCart(string userId)
         {
             // Находим запись корзины для указанного пользователя
-            var shoppingCart = await _context.ShoppingCarts
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+            var shoppingCart = _context.ShoppingCarts
+                .FirstOrDefault(c => c.UserId == userId);
 
-            List<Product> productList = JsonConvert.DeserializeObject<List<Product>>(shoppingCart.ProductsJson);
-
-            return productList;
+            if (shoppingCart.ProductsJson != "[]" && shoppingCart.ProductsJson != "{[]}")
+            {
+                List<Product> productList = JsonConvert.DeserializeObject<List<Product>>(shoppingCart.ProductsJson);
+                return productList;
+            }
+            else
+            {
+                // Возвращаем пустой список, если корзина не найдена
+                return new List<Product>();
+            }
         }
 
         public async Task RemoveFromCartAsync(string userId, Guid productId)
         {
             // Находим запись корзины для указанного пользователя
-            var shoppingCart = await _context.ShoppingCarts
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+            var shoppingCart = _context.ShoppingCarts.FirstOrDefault(c => c.UserId == userId);
 
             if (shoppingCart != null)
             {
                 // Извлекаем список товаров из JSON-строки
-                var productList = await GetProductsInCart(userId);
+                var productList = GetProductsInCart(userId);
 
-                // Удаляем товар из списка
-                Product currentProduct = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == productId);
-                productList.Remove(currentProduct);
-
+                // Находим товар в списке и уменьшаем его количество
+                var productToRemove = productList.FirstOrDefault(p => p.ProductId == productId);
+                productList.Remove(productToRemove);
                 // Обновляем JSON-строку
                 shoppingCart.ProductsJson = JsonConvert.SerializeObject(productList);
 
                 await _context.SaveChangesAsync();
             }
         }
+
+
+
+
+
 
         public async Task UpdateAsync(string userId, Guid productId)
         {

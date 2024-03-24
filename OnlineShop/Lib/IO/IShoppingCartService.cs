@@ -6,6 +6,6 @@ namespace OnlineShop.Lib.IO
     {
         Task AddToCartAsync(string userId, Guid productId);
         Task RemoveFromCartAsync(string userId, Guid productId);
-        Task <List<Product>?> GetProductsInCart(string userId);
+        List<Product> GetProductsInCart(string userId);
     }
 }
