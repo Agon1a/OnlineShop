@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>404 - Страница не найдена</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #d9534f;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="align-items-center">
+    <div class="col-md-12 text-center">
+        <h1>404 - Страница не найдена</h1>
+
+        <p>Извините, запрашиваемая страница не найдена.</p>
+        <a href="@Url.Action("RedirectToHome", "Error")" class="btn btn-primary">Вернуться на главную</a>
+    </div>
+</body>
+</html>

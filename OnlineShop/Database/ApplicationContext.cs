@@ -23,6 +23,7 @@ namespace OnlineShop.Database
             modelBuilder.Entity<UserAddress>().Property(ua => ua.AddressId).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<ShoppingCart>().Property(s => s.ProductsJson).HasDefaultValue("{[]}");
             modelBuilder.Entity<ShoppingCart>().Property(s => s.CartId).HasDefaultValueSql("NEWID()");
+            modelBuilder.Entity<Product>().Property(s => s.ProductId).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Order>().Property(o => o.OrderId).HasDefaultValueSql("NEWID()");
             modelBuilder.Entity<Category>().Property(c => c.CategoryId).HasDefaultValueSql("NEWID()");
         }
