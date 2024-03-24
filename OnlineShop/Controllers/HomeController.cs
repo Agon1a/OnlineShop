@@ -27,6 +27,12 @@ namespace OnlineShop.Controllers
             return View(categories);
         }
 
+        public IActionResult ShoppingCart()
+        {
+            List<Product> productsInCart = _context.Products.ToList();
+            return View(productsInCart);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
