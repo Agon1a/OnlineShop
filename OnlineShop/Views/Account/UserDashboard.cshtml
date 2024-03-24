@@ -17,13 +17,13 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane fade show active" id="index">
-            @Html.Partial("Index", (User)Model.User)
+            @Html.Partial("Index", ViewData["User"])
         </div>
         <div class="tab-pane fade" id="addresses">
-            @Html.Partial("Addresses", (List<UserAddress>)Model.UserAddresses)
+            @Html.Partial("Addresses", ViewData["UserAddresses"])
         </div>
         <div class="tab-pane fade" id="orders">
-            @Html.Partial("Orders", (List<Order>)Model.Orders)
+            @Html.Partial("Orders", ViewData["Orders"])
         </div>
     </div>
 </div>

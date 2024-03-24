@@ -125,7 +125,7 @@ namespace OnlineShop.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("UserDashboard");
         }
         public IActionResult Addresses()
         {
@@ -148,13 +148,32 @@ namespace OnlineShop.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddAddress(Guid addressId)
+        public IActionResult AddAddress(string addressName, string street, string? house, string? flat, string? entrance, string? floor)
         {
-            // Ваш код для редактирования адреса по его идентификатору
-            // Например, можно использовать методы EF Core для обновления записи в базе данных
-            // После выполнения операции редактирования перенаправьте пользователя на страницу с адресами
+            if (ModelState.IsValid)
+            {
+                // Получаем идентификатор пользователя
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                
+                var newAddress = new UserAddress
+                {
+                    AddressName = addressName,
+                    UserId = userId,
+                    Street = street,
+                    House = house,
+                    Flat = flat,
+                    Entrance = entrance,
+                    Floor = floor
+                };
 
-            return RedirectToAction("Addresses");
+                // Добавление адреса в контекст базы данных
+                _context.UserAddresses.Add(newAddress);
+                _context.SaveChanges();
+
+                return RedirectToAction("UserDashboard"); 
+            }
+
+            return RedirectToAction("UserDashboard");
         }
 
         [HttpPost]
@@ -171,21 +190,17 @@ namespace OnlineShop.Controllers
             return RedirectToAction("Addresses");
         }
 
-        // GET: /User/Dashboard
         public async Task<IActionResult> UserDashboard()
         {
             var user = await _userManager.GetUserAsync(User);
             var userAddresses = _context.UserAddresses.Where(a => a.UserId == user.Id).ToList();
             var orders = _context.Orders.Where(o => o.UserId == user.Id).ToList();
 
-            var model = new UserDashboardViewModel
-            {
-                User = user,
-                UserAddresses = userAddresses,
-                Orders = orders,
-            };
+            ViewData["User"] = user;
+            ViewData["UserAddresses"] = userAddresses;
+            ViewData["Orders"] = orders;
 
-            return View(model);
+            return View();
         }
 
         [HttpPost]
