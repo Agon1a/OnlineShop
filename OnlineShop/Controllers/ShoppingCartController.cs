@@ -27,7 +27,7 @@ namespace OnlineShop.Controllers
             var productsInCart = _shoppingCartService.GetProductsInCart(userId);
 
             // Подсчитываем количество каждого товара в корзине
-            var itemCounts = CountItemsInCart(productsInCart);
+            var itemCounts = _shoppingCartService.CountItemsInCart(productsInCart);
 
             // Передаем список товаров и количество каждого товара в ViewData
             ViewBag.ItemCounts = itemCounts;
@@ -35,35 +35,6 @@ namespace OnlineShop.Controllers
             return View();
         }
 
-        public List<ProductCountViewModel> CountItemsInCart(List<Product> productsInCart)
-        {
-            var itemCounts = new List<ProductCountViewModel>();
-
-            foreach (var product in productsInCart)
-            {
-                var existingItem = itemCounts.FirstOrDefault(i => i.ProductId == product.ProductId);
-
-                if (existingItem != null)
-                {
-                    existingItem.Quantity++;
-                    existingItem.TotalCost = existingItem.Quantity * existingItem.Cost;
-                }
-                else
-                {
-                    itemCounts.Add(new ProductCountViewModel
-                    {
-                        ProductId = product.ProductId,
-                        ProductName = product.ProductName,
-                        Description = product.Description,
-                        Cost = product.Cost,
-                        Quantity = 1,
-                        TotalCost = product.Cost
-                    });
-                }
-            }
-
-            return itemCounts;
-        }
 
         [HttpPost]
         public async Task<IActionResult> AddToCart(Guid productId)

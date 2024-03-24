@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using OnlineShop.Database;
 using OnlineShop.Lib.IO;
+using OnlineShop.Models;
 using OnlineShop.Models.DBModels;
 
 namespace OnlineShop.Lib
@@ -69,6 +70,36 @@ namespace OnlineShop.Lib
             }
         }
 
+        public List<ProductCountViewModel> CountItemsInCart(List<Product> productsInCart)
+        {
+            var itemCounts = new List<ProductCountViewModel>();
+
+            foreach (var product in productsInCart)
+            {
+                var existingItem = itemCounts.FirstOrDefault(i => i.ProductId == product.ProductId);
+
+                if (existingItem != null)
+                {
+                    existingItem.Quantity++;
+                    existingItem.TotalCost = existingItem.Quantity * existingItem.Cost;
+                }
+                else
+                {
+                    itemCounts.Add(new ProductCountViewModel
+                    {
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        Description = product.Description,
+                        Cost = product.Cost,
+                        Quantity = 1,
+                        TotalCost = product.Cost
+                    });
+                }
+            }
+
+            return itemCounts;
+        }
+
         public async Task RemoveFromCartAsync(string userId, Guid productId)
         {
             // Находим запись корзины для указанного пользователя
@@ -88,11 +119,6 @@ namespace OnlineShop.Lib
                 await _context.SaveChangesAsync();
             }
         }
-
-
-
-
-
 
         public async Task UpdateAsync(string userId, Guid productId)
         {

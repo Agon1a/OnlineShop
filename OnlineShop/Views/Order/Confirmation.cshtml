@@ -1,13 +1,81 @@
+@model List<OnlineShop.Models.DBModels.Product>
+
 @{
     ViewData["Title"] = "Confirmation";
 }
 
-<h1>Order Confirmation</h1>
 
-<p>Your order has been successfully placed. Thank you!</p>
+<div class="container">
+    <h1 style="text-align:center">Оформление заказа</h1>
+    <h2>Детали заказа</h2>
+    <table class="table">
+        <thead>
+            <tr style="font-weight:bold;">
+                <th>Название товара</th>
+                <th>Описание</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Итоговая сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ItemCounts)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Description</td>
+                    <td>@item.Cost.ToString("0.00") &#8381;</td>
+                    <!-- Здесь отображаем количество товара -->
+                    <td>@item.Quantity</td>
+                    <td>@item.TotalCost.ToString("0.00") &#8381;</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div style="margin-top:10px; font-weight:bold;">
+        Итоговая стоимость: @ViewBag.TotalCost.ToString("0.00") &#8381
+    </div>
+    <form method="post" action="@Url.Action("Checkout", "Order")">
+        <div class="form-group" style="margin-top:10px;">
+            <div class="form-group" style="margin-top: 10px">
+                <label for="fullName" style="font-weight:bold;">ФИО:</label>
+                <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Введите ФИО"
+                    value="@ViewBag.User.Fullname">
+            </div>
+            <div class="form-group" style="margin-top: 10px">
+                <label for="phoneNumber" style="font-weight:bold;">Номер телефона:</label>
+                <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber"
+                    placeholder="Введите номер телефона" value="@ViewBag.User.PhoneNumber">
+            </div>
+        </div>
+        <!-- Выпадающий список с данными из UserAddresses -->
+        <div class="form-group" style="margin-top: 10px">
+            <label for="address" style="font-weight:bold;">Выберите адрес:</label>
+            <select class="form-control" id="address" name="address">
+                @foreach (var addressName in ViewBag.UserAddresses)
+                {
+                    <option value="@addressName">@addressName</option>
+                }
+            </select>
+        </div>
+        <div class="form-group" style="margin-top: 10px">
+            <label style="font-weight:bold;">Способ оплаты:</label><br>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="cardPayment" value="card">
+                <label class="form-check-label" for="cardPayment">
+                    Картой при получении
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="paymentMethod" id="cashPayment" value="cash">
+                <label class="form-check-label" for="cashPayment">
+                    Наличными
+                </label>
+            </div>
+        </div>
+        <!-- Кнопка "Подтвердить заказ" -->
+        <button type="submit" class="btn btn-success" style="margin-top: 10px">Подтвердить заказ</button>
+    </form>
 
-<!-- Дополнительные детали о заказе, например, номер заказа, сумма, адрес доставки и т. д. -->
 
-<p>Order details:</p>
-
-<!-- Здесь можно вывести информацию о заказанных товарах, адресе доставки и т. д. -->
+</div>
