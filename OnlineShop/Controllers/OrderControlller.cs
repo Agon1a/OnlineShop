@@ -65,6 +65,12 @@ namespace OnlineShop.Controllers
 
             // Подсчитываем количество каждого товара в корзине
             var itemCounts = _shoppingCartService.CountItemsInCart(productsInCart);
+
+            if (itemCounts.Count == 0)
+            {
+                // Если корзина пуста, выполняем перенаправление на главную страницу
+                return RedirectToAction("Index", "Home");
+            }
             var totalCost = itemCounts.Select(p => p.TotalCost).Sum();
 
             // Передаем список товаров и количество каждого товара в ViewData

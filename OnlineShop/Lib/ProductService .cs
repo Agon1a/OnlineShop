@@ -1,4 +1,5 @@
-﻿using OnlineShop.Database;
+﻿using Microsoft.AspNetCore.Mvc;
+using OnlineShop.Database;
 using OnlineShop.Lib.IO;
 using OnlineShop.Models.DBModels;
 
@@ -18,5 +19,7 @@ namespace OnlineShop.Lib
             // Поиск товара по его идентификатору в базе данных
             return _context.Products.FirstOrDefault(p => p.ProductId == productId);
         }
+
+        
     }
 }
